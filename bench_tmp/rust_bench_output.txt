@@ -1,0 +1,19 @@
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+rust_zlib_compress      time:   [329.26 µs 329.85 µs 330.53 µs]
+                        change: [-1.3816% -0.9454% -0.5284%] (p = 0.00 < 0.05)
+                        Change within noise threshold.
+Found 4 outliers among 100 measurements (4.00%)
+  2 (2.00%) high mild
+  2 (2.00%) high severe
+
+rust_zlib_decompress    time:   [34.648 µs 35.045 µs 35.526 µs]
+                        change: [-0.4750% +1.2032% +2.6159%] (p = 0.13 > 0.05)
+                        No change in performance detected.
+Found 16 outliers among 100 measurements (16.00%)
+  7 (7.00%) high mild
+  9 (9.00%) high severe
+
