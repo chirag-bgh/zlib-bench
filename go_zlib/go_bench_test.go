@@ -1,4 +1,3 @@
-// go_bench_test.go
 package main
 
 import (
@@ -9,22 +8,27 @@ import (
     "testing"
 )
 
-func BenchmarkZlibCompress(b *testing.B) {
+func loadInput() []byte {
     input, _ := os.ReadFile("../bench_inputs/sample.txt")
+    return input
+}
+
+func benchmarkCompress(b *testing.B, level int) {
+    input := loadInput()
     b.ResetTimer()
 
     for i := 0; i < b.N; i++ {
         var buf bytes.Buffer
-        w := zlib.NewWriter(&buf)
+        w, _ := zlib.NewWriterLevel(&buf, level)
         w.Write(input)
         w.Close()
     }
 }
 
-func BenchmarkZlibDecompress(b *testing.B) {
-    input, _ := os.ReadFile("../bench_inputs/sample.txt")
+func benchmarkDecompress(b *testing.B, level int) {
+    input := loadInput()
     var buf bytes.Buffer
-    w := zlib.NewWriter(&buf)
+    w, _ := zlib.NewWriterLevel(&buf, level)
     w.Write(input)
     w.Close()
     compressed := buf.Bytes()
@@ -37,3 +41,10 @@ func BenchmarkZlibDecompress(b *testing.B) {
     }
 }
 
+func BenchmarkCompressDefault(b *testing.B) { benchmarkCompress(b, zlib.DefaultCompression) }
+func BenchmarkCompressFast(b *testing.B)    { benchmarkCompress(b, zlib.BestSpeed) }
+func BenchmarkCompressBest(b *testing.B)    { benchmarkCompress(b, zlib.BestCompression) }
+
+func BenchmarkDecompressDefault(b *testing.B) { benchmarkDecompress(b, zlib.DefaultCompression) }
+func BenchmarkDecompressFast(b *testing.B)    { benchmarkDecompress(b, zlib.BestSpeed) }
+func BenchmarkDecompressBest(b *testing.B)    { benchmarkDecompress(b, zlib.BestCompression) }

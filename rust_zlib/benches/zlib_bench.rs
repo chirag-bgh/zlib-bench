@@ -1,34 +1,43 @@
-use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use flate2::{write::ZlibEncoder, read::ZlibDecoder, Compression};
+use criterion::{criterion_group, criterion_main, Criterion, black_box};
+use flate2::{Compression, write::ZlibEncoder, read::ZlibDecoder};
 use std::fs::read;
-use std::io::{Read, Write};
+use std::io::{Write, Read};
 
-fn compress_benchmark(c: &mut Criterion) {
+fn run_compress_bench(c: &mut Criterion, name: &str, level: Compression) {
     let input = read("../bench_inputs/sample.txt").unwrap();
-    c.bench_function("rust_zlib_compress", |b| {
+    c.bench_function(name, |b| {
         b.iter(|| {
-            let mut e = ZlibEncoder::new(Vec::new(), Compression::default());
-            e.write_all(black_box(&input)).unwrap();
-            let _ = e.finish().unwrap();
+            let mut encoder = ZlibEncoder::new(Vec::new(), level);
+            encoder.write_all(black_box(&input)).unwrap();
+            let _ = encoder.finish().unwrap();
         });
     });
 }
 
-fn decompress_benchmark(c: &mut Criterion) {
+fn run_decompress_bench(c: &mut Criterion, name: &str, level: Compression) {
     let input = read("../bench_inputs/sample.txt").unwrap();
-    let mut e = ZlibEncoder::new(Vec::new(), Compression::default());
-    e.write_all(&input).unwrap();
-    let compressed = e.finish().unwrap();
+    let mut encoder = ZlibEncoder::new(Vec::new(), level);
+    encoder.write_all(&input).unwrap();
+    let compressed = encoder.finish().unwrap();
 
-    c.bench_function("rust_zlib_decompress", |b| {
+    c.bench_function(name, |b| {
         b.iter(|| {
-            let mut d = ZlibDecoder::new(&compressed[..]);
+            let mut decoder = ZlibDecoder::new(&compressed[..]);
             let mut out = Vec::new();
-            d.read_to_end(&mut out).unwrap();
+            decoder.read_to_end(&mut out).unwrap();
         });
     });
 }
 
-criterion_group!(benches, compress_benchmark, decompress_benchmark);
-criterion_main!(benches);
+fn zlib_benchmarks(c: &mut Criterion) {
+    run_compress_bench(c, "rust_zlib_compress_default", Compression::default());
+    run_compress_bench(c, "rust_zlib_compress_fast", Compression::fast());
+    run_compress_bench(c, "rust_zlib_compress_best", Compression::best());
 
+    run_decompress_bench(c, "rust_zlib_decompress_default", Compression::default());
+    run_decompress_bench(c, "rust_zlib_decompress_fast", Compression::fast());
+    run_decompress_bench(c, "rust_zlib_decompress_best", Compression::best());
+}
+
+criterion_group!(benches, zlib_benchmarks);
+criterion_main!(benches);

@@ -2,7 +2,11 @@ goos: darwin
 goarch: arm64
 pkg: go_zlib
 cpu: Apple M2 Pro
-BenchmarkZlibCompress-10      	    2318	    521955 ns/op	  830060 B/op	      27 allocs/op
-BenchmarkZlibDecompress-10    	   12920	     92694 ns/op	  103348 B/op	      22 allocs/op
+BenchmarkCompressDefault-10      	    2346	    512077 ns/op	  830059 B/op	      27 allocs/op
+BenchmarkCompressFast-10         	    5482	    214264 ns/op	 1223281 B/op	      29 allocs/op
+BenchmarkCompressBest-10         	    1868	    640341 ns/op	  830060 B/op	      27 allocs/op
+BenchmarkDecompressDefault-10    	   12848	     92822 ns/op	  103348 B/op	      22 allocs/op
+BenchmarkDecompressFast-10       	   10000	    102162 ns/op	  103464 B/op	      25 allocs/op
+BenchmarkDecompressBest-10       	   12649	     93992 ns/op	  103348 B/op	      22 allocs/op
 PASS
-ok  	go_zlib	4.442s
+ok  	go_zlib	10.338s
