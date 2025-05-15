@@ -8,7 +8,7 @@ name = "zlib_bench"
 harness = false
 
 [dependencies]
-flate2 = "1.0"
+flate2 = { version = "1", features = ["zlib-rs"], default-features = false }
 
 [dev-dependencies]
 criterion = "0.5"
